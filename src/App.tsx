@@ -69,7 +69,7 @@ function App({ quote, status, error, quoteGenerator }: AppProps) {
       flexDirection={"column"}
       justifyContent={"center"}
       alignItems={"center"}
-      height="100vh"
+      height="100%"
     >
       <HStack p={4} width="100%">
         <Avatar
