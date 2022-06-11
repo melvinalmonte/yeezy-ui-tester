@@ -91,7 +91,7 @@ function App({ quote, status, error, quoteGenerator }: AppProps) {
           borderRadius={"full"}
           onClick={() => increaseCounter(counter + 1)}
         >
-          Random Quote
+          Get new quote
         </Button>
       </Center>
     </Container>
