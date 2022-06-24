@@ -10,9 +10,6 @@ import {
   WrapItem,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { connect } from "react-redux";
-import { quoteGenerator } from "./features/quotes/quoteSlice";
-import { RootState } from "./store";
 import pic1 from "./static/sticker_1.png";
 import pic2 from "./static/sticker_2.png";
 import pic4 from "./static/sticker_4.png";
@@ -29,6 +26,7 @@ import pic14 from "./static/sticker_14.png";
 import pic15 from "./static/sticker_15.png";
 import pic16 from "./static/sticker_16.png";
 import pic17 from "./static/sticker_17.png";
+import { yeAPI } from "./services/quotes";
 
 export const yePics = [
   pic1,
@@ -49,18 +47,11 @@ export const yePics = [
   pic17,
 ];
 
-type AppProps = {
-  quote: string;
-  status: string;
-  error: object;
-  quoteGenerator: () => void;
-};
-
-function App({ quote, status, error, quoteGenerator }: AppProps) {
+function App() {
   const [randomIndex, setRandomIndex] = useState(0);
   const [counter, increaseCounter] = useState(0);
+  const { isLoading, data, refetch } = yeAPI.useGetYeQuoteQuery();
   useEffect(() => {
-    quoteGenerator();
     setRandomIndex(Math.floor(Math.random() * yePics.length));
   }, [counter]);
   return (
@@ -80,8 +71,8 @@ function App({ quote, status, error, quoteGenerator }: AppProps) {
         />
         <Wrap>
           <WrapItem alignItems={"center"}>
-            <Skeleton isLoaded={status !== "pending"}>
-              <Text>"{quote}"</Text>
+            <Skeleton isLoaded={!isLoading}>
+              <Text>"{data?.ye_quote}"</Text>
             </Skeleton>
           </WrapItem>
         </Wrap>
@@ -89,7 +80,10 @@ function App({ quote, status, error, quoteGenerator }: AppProps) {
       <Center>
         <Button
           borderRadius={"full"}
-          onClick={() => increaseCounter(counter + 1)}
+          onClick={() => {
+            refetch();
+            increaseCounter(counter + 1);
+          }}
         >
           Get new quote
         </Button>
@@ -98,17 +92,4 @@ function App({ quote, status, error, quoteGenerator }: AppProps) {
   );
 }
 
-const mapStateToProps = (state: RootState) => {
-  const { kanye } = state;
-  return {
-    quote: kanye.quote,
-    status: kanye.status,
-    error: kanye.error,
-  };
-};
-
-const mapDispatchToProps = {
-  quoteGenerator,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default App;

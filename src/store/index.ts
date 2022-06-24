@@ -1,14 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
-import thunk from "redux-thunk";
-import quoteReducer from "../features/quotes/quoteSlice";
+import { yeAPI } from "../services/quotes";
+import { setupListeners } from "@reduxjs/toolkit/query";
 
 const store = configureStore({
-  middleware: [thunk],
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(yeAPI.middleware),
   reducer: {
-    kanye: quoteReducer,
+    [yeAPI.reducerPath]: yeAPI.reducer,
   },
 });
-
+setupListeners(store.dispatch);
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 export default store;
